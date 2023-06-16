@@ -2,23 +2,31 @@ use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::env;
-use std::process::exit;
+use std::process::{exit, Command};
 
 
 fn init() {
-    fs::create_dir("src-test").expect("Failed to create src/");
+    fs::create_dir("src").expect("Failed to create src/");
     fs::create_dir("bin").expect("Failed to create bin/");
 
-    let mut src_file: File = File::create("src-test/main.c").expect("Failed to create src/main.c");
+    let mut src_file: File = File::create("src/main.c").expect("Failed to create src/main.c");
 
-    let entry_point_template: &str = "#include <stdio.h>\n\nint main()\n{\n\tprintf(\"Hello, World!\");\n}\n";
+    let entry_point_template: &str = "#include <stdio.h>\n\nint main()\n{\n\tprintf(\"Hello, World!\\n\");\n}\n";
 
     /* Write the main function to src/main.c */
     src_file.write_all(entry_point_template.as_bytes()).expect("Faild to write to src/main.c");
 
-    let mut gitignore_file: File = File::create(".gitignore-test").expect("Failed to create .gitignore");
+    let mut gitignore_file: File = File::create(".gitignore").expect("Failed to create .gitignore");
     let gitignore_file_template: &str = "bin/";
     gitignore_file.write_all(gitignore_file_template.as_bytes()).expect("Failed to write to .gitignore");
+}
+
+
+fn build() {
+    Command::new("gcc")
+            .args(["src/main.c", "-o", "bin/main.out"])
+            .spawn()
+            .expect("Failed to start gcc command");
 }
 
 
@@ -47,6 +55,11 @@ fn parse_command(command: String) {
     if command == "init" {
         init();
         return;
+    }
+
+    if command == "build" {
+        build();
+        return; 
     }
 
     println!("Unkown command: {}", command);
