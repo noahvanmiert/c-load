@@ -23,10 +23,18 @@ fn init() {
 
 
 fn build() {
-    Command::new("gcc")
+    let mut child = Command::new("gcc")
             .args(["src/main.c", "-o", "bin/main.out"])
             .spawn()
             .expect("Failed to start gcc command");
+    
+    child.wait().unwrap();
+}
+
+
+fn run() {
+    let mut child = Command::new("./bin/main.out").spawn().expect("Failed to run ./bin/main.out");
+    child.wait().unwrap();
 }
 
 
@@ -59,6 +67,12 @@ fn parse_command(command: String) {
 
     if command == "build" {
         build();
+        return; 
+    }
+
+    if command == "run" {
+        build();
+        run();
         return; 
     }
 
