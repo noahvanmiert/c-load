@@ -3,6 +3,7 @@ use std::fs::File;
 use std::io::Write;
 use std::env;
 use std::process::{exit, Command};
+use walkdir::WalkDir;
 
 
 fn init() {
@@ -23,8 +24,19 @@ fn init() {
 
 
 fn build() {
+    let mut sources: Vec<String> = vec![];
+
+    for entry in WalkDir::new("src/") {
+        let entry = entry.unwrap();
+        
+        if entry.path().to_str().unwrap().to_string().ends_with(".c") {
+            sources.push(entry.path().to_str().unwrap().to_string());
+        }
+    }
+
     let mut child = Command::new("gcc")
-            .args(["src/main.c", "-o", "bin/main.out"])
+            .args(sources)
+            .args(["-o", "bin/main.out"])
             .spawn()
             .expect("Failed to start gcc command");
     
@@ -45,6 +57,8 @@ fn help() {
     println!("  -h, --help  Prints this help message\n");
     println!("Commands:");
     println!("  init        Creates a new C project");
+    println!("  build       Compiles everything into bin/main.out");
+    println!("  run         Compiles everything and runs it");
 }
 
 
