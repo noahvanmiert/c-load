@@ -60,6 +60,7 @@ fn main() {
 
     if Config::exists() {
         clconfig = Config::load();
+        clconfig.validate();
     }
 
     for argument in env::args().skip(1) {

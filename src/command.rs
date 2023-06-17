@@ -54,8 +54,6 @@ pub fn build(clconfig: &Config) {
         }
     }
 
-    dbg!(&clconfig.compiler);
-
     if clconfig.verbose {
         println!("{} {:?} -o bin/main.out {:?}", clconfig.compiler, sources, clconfig.c_flags);
     }

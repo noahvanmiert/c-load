@@ -9,6 +9,7 @@ use serde::Deserialize;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
+use std::process::exit;
 
 
 /// Contains de data defined in the configuration file
@@ -65,9 +66,15 @@ impl Config {
         let data: Config = serde_json::from_str(&file_contents)
                                       .expect("Failed to deserialize JSON");
 
-        println!("data: {:?}", data);
-
         return data;
+    }
+
+
+    pub fn validate(&self) {
+        if self.compiler != "gcc" && self.compiler != "clang" {
+            println!("Error: unkown compiler set in `.clconfig`, {}", self.compiler);
+            exit(1);
+        }
     }
 
 }
