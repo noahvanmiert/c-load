@@ -35,7 +35,7 @@ To build the project, use the build command
 $ c-load build
 ```
 
-This will compile all source files into 1 binary, for now `gcc` is used but I'm working on a config file so you can choose what compiler to use and which flags to activate.
+This will compile all source files into 1 binary, you can choose what compiler to use in the config file.
 
 ---
 
@@ -45,3 +45,44 @@ $ c-load run
 ```
 
 This will build and run the project.
+
+## C-load configuration
+To configure c-load you need to make a `.clconfig` file in the root directory.
+
+The config file should be written in JSON format.
+
+--
+
+To change the compiler (default is `clang`)
+```json
+{
+    "compiler": "gcc"
+}
+```
+
+--
+
+To change the name of the output executable (default is `main.out`)
+```json
+{
+    "output": "a.out"
+}
+```
+
+--
+
+To set compiler flags (by default no flags are set)
+```json
+{
+    "c_flags": ["-pedantic", "-Wall"]
+}
+```
+
+-- 
+
+Get verbose output (by default is set to`false`)
+```json
+{
+    "verbose": true
+}
+```
