@@ -54,11 +54,13 @@ pub fn build(clconfig: &Config) {
         }
     }
 
+    dbg!(&clconfig.compiler);
+
     if clconfig.verbose {
-        println!("gcc {:?} -o bin/main.out {:?}", sources, clconfig.c_flags);
+        println!("{} {:?} -o bin/main.out {:?}", clconfig.compiler, sources, clconfig.c_flags);
     }
 
-    let mut child = Command::new("gcc")
+    let mut child = Command::new(&clconfig.compiler)
             .args(sources)
             .args(["-o", "bin/main.out"])
             .args(clconfig.c_flags.clone())
