@@ -41,7 +41,7 @@ fn parse_command(command: String, clconfig: &Config) {
 
     if command == "run" {
         command::build(&clconfig);
-        command::run();
+        command::run(&clconfig);
         return; 
     }
 

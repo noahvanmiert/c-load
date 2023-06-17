@@ -54,13 +54,15 @@ pub fn build(clconfig: &Config) {
         }
     }
 
+    let output = format!("{}/{}", "bin", clconfig.output).to_string();
+
     if clconfig.verbose {
-        println!("{} {:?} -o bin/main.out {:?}", clconfig.compiler, sources, clconfig.c_flags);
+        println!("{} {:?} -o {} {:?}", clconfig.compiler, sources, &output, clconfig.c_flags);
     }
 
     let mut child = Command::new(&clconfig.compiler)
             .args(sources)
-            .args(["-o", "bin/main.out"])
+            .args(["-o", &output])
             .args(clconfig.c_flags.clone())
             .spawn()
             .expect("Failed to start gcc command");
@@ -71,8 +73,10 @@ pub fn build(clconfig: &Config) {
 
 
 /// This function builds and runs the C project
-pub fn run() {
-    let mut child = Command::new("./bin/main.out")
+pub fn run(clconfig: &Config) {
+    let output = format!("{}/{}", "bin", clconfig.output).to_string();
+
+    let mut child = Command::new(format!("./{}", output))
                                    .spawn()
                                    .expect("Failed to run ./bin/main.out");
 

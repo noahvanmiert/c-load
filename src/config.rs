@@ -19,6 +19,9 @@ pub struct Config {
     #[serde(default = "default_compiler")]
     pub compiler: String,
 
+    #[serde(default = "default_output")]
+    pub output: String,
+
     #[serde(default)]
     pub c_flags: Vec<String>,
 
@@ -32,11 +35,17 @@ fn default_compiler() -> String {
 }
 
 
+fn default_output() -> String {
+    return "main.out".to_string();
+}
+
+
 impl Default for Config {
 
     fn default() -> Config {
         Config {
             compiler: "clang".to_string(),
+            output: "main.out".to_string(),
             c_flags: vec![],
             verbose: true,
         }
