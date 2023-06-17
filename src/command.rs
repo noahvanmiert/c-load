@@ -9,7 +9,7 @@
 use std::{fs, vec};
 use std::fs::File;
 use std::io::Write;
-use std::process::Command;
+use std::process::{Command, Stdio};
 use walkdir::WalkDir;
 
 use crate::config::Config;
@@ -25,22 +25,14 @@ impl ClCommand {
         fs::create_dir("src").expect("Failed to create `src/`");
         fs::create_dir("bin").expect("Failed to create `bin/`");
 
-        let mut src_file: File = File::create(format!("src/{}", clconfig.entry))
-                                      .expect(format!("Failed to create `src/{}`", clconfig.entry).as_str());
+        Self::create_entry_point(&clconfig);
 
-        let main_function_template: &str = "#include <stdio.h>\n\nint main()\n{\n\tprintf(\"Hello, World!\\n\");\n}\n";
+        Self::create_gitignore();
 
-        /* Write the main function to src/main.c */
-        src_file.write_all(main_function_template.as_bytes())
-                .expect(format!("Faild to write to src/{}", clconfig.entry).as_str());
-
-        let mut gitignore_file: File = File::create(".gitignore")
-                                            .expect("Failed to create `.gitignore`");
-
-        let gitignore_file_template: &str = "bin/";
-        gitignore_file.write_all(gitignore_file_template.as_bytes())
-                      .expect("Failed to write to `.gitignore`");
-
+        // Checks if `git` is enabled, if so then initialize the git repo
+        Self::init_git(&clconfig);
+        
+        println!("Succesfully initialized c-load project!");
     }
 
 
@@ -122,6 +114,51 @@ impl ClCommand {
         println!("  init        Creates a new C project");
         println!("  build       Compiles everything into bin/main.out");
         println!("  run         Compiles everything and runs it");
+
+    }
+
+
+    /// This function checks if `git` is enabled, if so it will initialize a repo.
+    fn init_git(clconfig: &Config) {
+
+        if clconfig.git {
+            let mut child = Command::new("git")
+                                           .arg("init")
+                                           .stdout(Stdio::null())
+                                           .stderr(Stdio::null())
+                                           .spawn()
+                                           .expect("Failed to run `git`");
+            
+            child.wait().unwrap();
+        }
+
+    }
+
+
+    fn create_gitignore() {
+
+        let mut gitignore: File = File::create(".gitignore")
+                                       .expect("Failed to create `.gitignore`");
+
+        let template: &str = "bin/";
+        
+        gitignore.write_all(template.as_bytes())
+                 .expect("Failed to write to `.gitignore`");
+
+    }
+
+
+    fn create_entry_point(clconfig: &Config) {
+
+        let mut entry: File = File::create(format!("src/{}", clconfig.entry))
+                                   .expect(format!("Failed to create `src/{}`", clconfig.entry)
+                                   .as_str());
+
+        let main_function_template: &str = "#include <stdio.h>\n\nint main()\n{\n\tprintf(\"Hello, World!\\n\");\n}\n";
+
+        /* Write the main function to src/main.c */
+        entry.write_all(main_function_template.as_bytes())
+             .expect(format!("Faild to write to src/{}", clconfig.entry).as_str());
 
     }
         

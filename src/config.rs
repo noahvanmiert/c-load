@@ -33,10 +33,14 @@ pub struct Config {
 
     #[serde(default = "default_entry")]
     pub entry: String,
+
+    #[serde(default = "default_git")]
+    pub git: bool,
 }
 
 
 /// Returns default value of `compiler` in `.clconfig`
+/// By default `compiler` is set to `clang`
 fn default_compiler() -> String {
 
     return "clang".to_string();
@@ -45,6 +49,7 @@ fn default_compiler() -> String {
 
 
 /// Returns default value of `output` in `.clconfig`
+/// By default `output` is set to `main.out`
 fn default_output() -> String {
 
     return "main.out".to_string();
@@ -53,6 +58,7 @@ fn default_output() -> String {
 
 
 /// Returns default value of `entry` in `.clconfig`
+/// By default `entry` is set to `main.c`
 fn default_entry() -> String {
 
     return "main.c".to_string();
@@ -60,8 +66,18 @@ fn default_entry() -> String {
 }
 
 
+/// Returns default value of `git` in `.clconfig`
+/// By default `git` is set to `true`.
+fn default_git() -> bool {
+
+    return true;
+
+}
+
+
 impl Default for Config {
 
+    /// Default trait for `Config`
     fn default() -> Config {
 
         Config {
@@ -71,6 +87,7 @@ impl Default for Config {
             verbose: true,
             ignore: vec![],
             entry: "main.c".to_string(),
+            git: true,
         }
 
     }
@@ -110,11 +127,13 @@ impl Config {
     // Validates the configuration, like if the compiler is 'gcc' or 'clang'
     pub fn validate(&self) {
 
+        // For now we only support `gcc` and `clang`
         if self.compiler != "gcc" && self.compiler != "clang" {
             println!("Error: unkown compiler set in `.clconfig`: {}", self.compiler);
             exit(1);
         }
 
+        // The entry point should always be a C file because the `main` function is defined here
         if !self.entry.ends_with(".c") {
             println!("Error: entry point option in `.clconfig` should always be a `.c` file");
             exit(1);
