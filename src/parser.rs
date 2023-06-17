@@ -50,7 +50,7 @@ impl Parser {
         match command.as_str() {
 
             "init" => {
-                ClCommand::init();
+                ClCommand::init(&clconfig);
                 return;
             }
 

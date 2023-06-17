@@ -20,19 +20,19 @@ pub struct ClCommand;
 impl ClCommand {
 
     /// This function initializes the C project.
-    pub fn init() {
+    pub fn init(clconfig: &Config) {
 
         fs::create_dir("src").expect("Failed to create `src/`");
         fs::create_dir("bin").expect("Failed to create `bin/`");
 
-        let mut src_file: File = File::create("src/main.c")
-                                      .expect("Failed to create `src/main.c`");
+        let mut src_file: File = File::create(format!("src/{}", clconfig.entry))
+                                      .expect(format!("Failed to create `src/{}`", clconfig.entry).as_str());
 
         let main_function_template: &str = "#include <stdio.h>\n\nint main()\n{\n\tprintf(\"Hello, World!\\n\");\n}\n";
 
         /* Write the main function to src/main.c */
         src_file.write_all(main_function_template.as_bytes())
-                .expect("Faild to write to src/main.c");
+                .expect(format!("Faild to write to src/{}", clconfig.entry).as_str());
 
         let mut gitignore_file: File = File::create(".gitignore")
                                             .expect("Failed to create `.gitignore`");
@@ -99,7 +99,7 @@ impl ClCommand {
 
         if clconfig.verbose {
             println!("Running");
-            println!("->  ./bin/{}", clconfig.output);
+            println!("->  ./bin/{}\n", clconfig.output);
         }
 
         let mut child = Command::new(format!("./{}", output))
@@ -108,10 +108,6 @@ impl ClCommand {
 
         /* Wait untill the process is finished */
         child.wait().unwrap();
-
-        if clconfig.verbose {
-            println!("Progam ran succesfully!")
-        }
     }
 
 

@@ -30,10 +30,13 @@ pub struct Config {
 
     #[serde(default)]
     pub ignore: Vec<String>,
+
+    #[serde(default = "default_entry")]
+    pub entry: String,
 }
 
 
-/// Returns default value of compiler in `.clconfig`
+/// Returns default value of `compiler` in `.clconfig`
 fn default_compiler() -> String {
 
     return "clang".to_string();
@@ -41,10 +44,18 @@ fn default_compiler() -> String {
 }
 
 
-/// Returns default value of output in `.clconfig`
+/// Returns default value of `output` in `.clconfig`
 fn default_output() -> String {
 
     return "main.out".to_string();
+
+}
+
+
+/// Returns default value of `entry` in `.clconfig`
+fn default_entry() -> String {
+
+    return "main.c".to_string();
 
 }
 
@@ -59,6 +70,7 @@ impl Default for Config {
             c_flags: vec![],
             verbose: true,
             ignore: vec![],
+            entry: "main.c".to_string(),
         }
 
     }
@@ -100,6 +112,11 @@ impl Config {
 
         if self.compiler != "gcc" && self.compiler != "clang" {
             println!("Error: unkown compiler set in `.clconfig`: {}", self.compiler);
+            exit(1);
+        }
+
+        if !self.entry.ends_with(".c") {
+            println!("Error: entry point option in `.clconfig` should always be a `.c` file");
             exit(1);
         }
 

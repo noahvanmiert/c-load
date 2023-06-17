@@ -101,3 +101,14 @@ Ignore C files for compilation.
 In this example `src/example.c` would just be ignored an not be compiled.
 
 Important to know is to **always** use the whole path, so dont forget the `src`.
+
+--
+
+Change entry point, if you don't want `main.c` to be your entry point you can use this option.
+```json
+{
+    "entry": "entry.c"
+}
+```
+
+Now the main function will be in `entry.c` instead of `main.c`.
