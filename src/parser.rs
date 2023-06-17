@@ -9,7 +9,7 @@
 use std::process::exit;
 
 use crate::Config;
-use crate::command;
+use crate::command::ClCommand;
 
 
 pub struct Parser;
@@ -34,7 +34,7 @@ impl Parser {
     fn parse_option(arg: String, _clconfig: &Config) {
 
         if arg == "-h" || arg == "--help" {
-            command::help();
+            ClCommand::help();
             exit(0);
         }
     
@@ -50,18 +50,18 @@ impl Parser {
         match command.as_str() {
 
             "init" => {
-                command::init();
+                ClCommand::init();
                 return;
             }
 
             "build" => {
-                command::build(&clconfig);
+                ClCommand::build(&clconfig);
                 return;
             }
 
             "run" => {
-                command::build(&clconfig);
-                command::run(&clconfig);
+                ClCommand::build(&clconfig);
+                ClCommand::run(&clconfig);
                 return;
             }
 
@@ -79,7 +79,7 @@ impl Parser {
     pub fn check_args_length() {
 
         if std::env::args().len() < 2 {
-            command::help();
+            ClCommand::help();
         }
 
     }
