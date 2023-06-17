@@ -6,55 +6,16 @@
 */
 
 
-use std::env;
-use std::process::exit;
-
 use config::Config;
+use parser::Parser;
 
 mod command;
 mod config;
-
-
-/// This function parses the given options (flags)
-fn parse_option(arg: String, _clconfig: &Config) {
-    if arg == "-h" || arg == "--help" {
-        command::help();
-        exit(0);
-    }
-
-    println!("Unkown option: {}", arg);
-    exit(1);
-}
-
-
-/// This function parses the given command
-fn parse_command(command: String, clconfig: &Config) {
-    if command == "init" {
-        command::init();
-        return;
-    }
-
-    if command == "build" {
-        command::build(&clconfig);
-        return; 
-    }
-
-    if command == "run" {
-        command::build(&clconfig);
-        command::run(&clconfig);
-        return; 
-    }
-
-    println!("Unkown command: {}", command);
-    exit(1);
-}
+mod parser;
 
 
 fn main() {
-    /* Check if enough commands are given */
-    if env::args().len() < 2 {
-        command::help();
-    }
+    Parser::check_args_length();
 
     let mut clconfig = Config { ..Default::default() };
 
@@ -63,12 +24,5 @@ fn main() {
         clconfig.validate();
     }
 
-    for argument in env::args().skip(1) {
-        if argument.starts_with('-') {
-            parse_option(argument, &clconfig);
-            continue;
-        } 
-
-        parse_command(argument, &clconfig);
-    }
+    Parser::parse_args(&clconfig);
 }

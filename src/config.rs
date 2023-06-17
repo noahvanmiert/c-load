@@ -33,19 +33,26 @@ pub struct Config {
 }
 
 
+/// Returns default value of compiler in `.clconfig`
 fn default_compiler() -> String {
+
     return "clang".to_string();
+
 }
 
 
+/// Returns default value of output in `.clconfig`
 fn default_output() -> String {
+
     return "main.out".to_string();
+
 }
 
 
 impl Default for Config {
 
     fn default() -> Config {
+
         Config {
             compiler: "clang".to_string(),
             output: "main.out".to_string(),
@@ -53,6 +60,7 @@ impl Default for Config {
             verbose: true,
             ignore: vec![],
         }
+
     }
     
 }
@@ -62,12 +70,15 @@ impl Config {
 
     /// Returns true if the config file exists
     pub fn exists() -> bool {
+
         return Path::new(".clconfig").exists();
+
     }
 
 
     /// Returns a Config struct instance with the data loaded from `.clconfig`
     pub fn load() -> Config {
+
         let mut file = File::open(".clconfig")
                                   .expect("Failed to open config file");
 
@@ -80,14 +91,18 @@ impl Config {
                                       .expect("Failed to deserialize JSON");
 
         return data;
+        
     }
 
 
+    // Validates the configuration, like if the compiler is 'gcc' or 'clang'
     pub fn validate(&self) {
+
         if self.compiler != "gcc" && self.compiler != "clang" {
-            println!("Error: unkown compiler set in `.clconfig`, {}", self.compiler);
+            println!("Error: unkown compiler set in `.clconfig`: {}", self.compiler);
             exit(1);
         }
+
     }
 
 }

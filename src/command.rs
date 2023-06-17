@@ -9,14 +9,15 @@
 use std::fs;
 use std::fs::File;
 use std::io::Write;
-use walkdir::WalkDir;
 use std::process::Command;
+use walkdir::WalkDir;
 
 use crate::config::Config;
 
 
 /// This function initializes the C project.
 pub fn init() {
+
     fs::create_dir("src").expect("Failed to create src/");
     fs::create_dir("bin").expect("Failed to create bin/");
 
@@ -35,11 +36,13 @@ pub fn init() {
     let gitignore_file_template: &str = "bin/";
     gitignore_file.write_all(gitignore_file_template.as_bytes())
                   .expect("Failed to write to .gitignore");
+
 }
 
 
 /// This function builds the C project
 pub fn build(clconfig: &Config) {
+
     let mut sources: Vec<String> = vec![];
 
     /* 
@@ -71,11 +74,13 @@ pub fn build(clconfig: &Config) {
     
     /* Wait untill the process is finished */
     child.wait().unwrap();
+
 }
 
 
 /// This function builds and runs the C project
 pub fn run(clconfig: &Config) {
+
     let output = format!("bin/{}", clconfig.output).to_string();
 
     let mut child = Command::new(format!("./{}", output))
@@ -84,11 +89,13 @@ pub fn run(clconfig: &Config) {
 
     /* Wait untill the process is finished */
     child.wait().unwrap();
+
 }
 
 
 /// This function prints a help message.
 pub fn help() {
+
     println!("Simple package manager for C\n");
     println!("Usage: cload [OPTIONS] [COMMAND]\n");
     println!("Options:");
@@ -97,4 +104,5 @@ pub fn help() {
     println!("  init        Creates a new C project");
     println!("  build       Compiles everything into bin/main.out");
     println!("  run         Compiles everything and runs it");
+
 }
