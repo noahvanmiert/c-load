@@ -86,3 +86,18 @@ Get verbose output (by default is set to`false`)
     "verbose": true
 }
 ```
+
+--
+
+Ignore C files for compilation.
+```json
+{
+    "ignore": [
+        "src/example.c"
+    ]
+}
+```
+
+In this example `src/example.c` would just be ignored an not be compiled.
+
+Important to know is to **always** use the whole path, so dont forget the `src`.

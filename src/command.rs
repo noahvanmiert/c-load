@@ -49,7 +49,9 @@ pub fn build(clconfig: &Config) {
     for entry in WalkDir::new("src/") {
         let entry = entry.unwrap();
         
-        if entry.path().to_str().unwrap().to_string().ends_with(".c") {
+        if entry.path().to_str().unwrap().to_string().ends_with(".c") 
+            && !clconfig.ignore.contains(&entry.path().to_str().unwrap().to_string()) 
+        {
             sources.push(entry.path().to_str().unwrap().to_string());
         }
     }
@@ -74,7 +76,7 @@ pub fn build(clconfig: &Config) {
 
 /// This function builds and runs the C project
 pub fn run(clconfig: &Config) {
-    let output = format!("{}/{}", "bin", clconfig.output).to_string();
+    let output = format!("bin/{}", clconfig.output).to_string();
 
     let mut child = Command::new(format!("./{}", output))
                                    .spawn()

@@ -27,6 +27,9 @@ pub struct Config {
 
     #[serde(default)]
     pub verbose: bool,
+
+    #[serde(default)]
+    pub ignore: Vec<String>,
 }
 
 
@@ -48,6 +51,7 @@ impl Default for Config {
             output: "main.out".to_string(),
             c_flags: vec![],
             verbose: true,
+            ignore: vec![],
         }
     }
     
