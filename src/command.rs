@@ -12,6 +12,8 @@ use std::io::Write;
 use walkdir::WalkDir;
 use std::process::Command;
 
+use crate::config::ConfigData;
+
 
 /// This function initializes the C project.
 pub fn init() {
@@ -37,7 +39,7 @@ pub fn init() {
 
 
 /// This function builds the C project
-pub fn build() {
+pub fn build(clconfig: &ConfigData) {
     let mut sources: Vec<String> = vec![];
 
     /* 
@@ -52,9 +54,14 @@ pub fn build() {
         }
     }
 
+    if clconfig.verbose {
+        println!("gcc {:?} -o bin/main.out {:?}", sources, clconfig.c_flags);
+    }
+
     let mut child = Command::new("gcc")
             .args(sources)
             .args(["-o", "bin/main.out"])
+            .args(clconfig.c_flags.clone())
             .spawn()
             .expect("Failed to start gcc command");
     
