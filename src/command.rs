@@ -12,7 +12,7 @@ use std::io::Write;
 use walkdir::WalkDir;
 use std::process::Command;
 
-use crate::config::ConfigData;
+use crate::config::Config;
 
 
 /// This function initializes the C project.
@@ -39,7 +39,7 @@ pub fn init() {
 
 
 /// This function builds the C project
-pub fn build(clconfig: &ConfigData) {
+pub fn build(clconfig: &Config) {
     let mut sources: Vec<String> = vec![];
 
     /* 

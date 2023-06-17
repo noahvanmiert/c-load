@@ -11,8 +11,10 @@ use std::io::Read;
 use std::path::Path;
 
 
+/// Contains de data defined in the configuration file
+/// You can create a config file by just creating `.clconfig` in the root folder
 #[derive(Debug, Deserialize)]
-pub struct ConfigData {
+pub struct Config {
     #[serde(default)]
     pub c_flags: Vec<String>,
     #[serde(default)]
@@ -20,31 +22,40 @@ pub struct ConfigData {
 }
 
 
-impl Default for ConfigData {
-    fn default() -> ConfigData {
-        return ConfigData {
+impl Default for Config {
+
+    fn default() -> Config {
+        return Config {
             c_flags: vec![],
             verbose: false,
         }
     }
+    
 }
 
 
-pub fn config_exists() -> bool {
-    return Path::new(".clconfig").exists();
-}
+impl Config {
+
+    /// Returns true if the config file exists
+    pub fn exists() -> bool {
+        return Path::new(".clconfig").exists();
+    }
 
 
-pub fn get_config(path: &str) -> ConfigData {
-    let mut file = File::open(path)
+    /// Returns a Config struct instance with the data loaded from `.clconfig`
+    pub fn load() -> Config {
+        let mut file = File::open(".clconfig")
                         .expect("Failed to open config file");
 
-    let mut file_contents = String::new(); 
-    file.read_to_string(&mut file_contents)
-        .expect("Failed t read config file");
+        let mut file_contents = String::new(); 
 
-    let data: ConfigData = serde_json::from_str(&file_contents)
-                                      .expect("Failed to deserialize JSON");
+        file.read_to_string(&mut file_contents)
+            .expect("Failed t read config file");
 
-    return data;
+        let data: Config = serde_json::from_str(&file_contents)
+                                        .expect("Failed to deserialize JSON");
+
+        return data;
+    }
+
 }

@@ -9,14 +9,14 @@
 use std::env;
 use std::process::exit;
 
-use config::{config_exists, get_config, ConfigData};
+use config::Config;
 
 mod command;
 mod config;
 
 
 /// This function parses the given options (flags)
-fn parse_option(arg: String, _clconfig: &ConfigData) {
+fn parse_option(arg: String, _clconfig: &Config) {
     if arg == "-h" || arg == "--help" {
         command::help();
         exit(0);
@@ -28,7 +28,7 @@ fn parse_option(arg: String, _clconfig: &ConfigData) {
 
 
 /// This function parses the given command
-fn parse_command(command: String, clconfig: &ConfigData) {
+fn parse_command(command: String, clconfig: &Config) {
     if command == "init" {
         command::init();
         return;
@@ -56,10 +56,10 @@ fn main() {
         command::help();
     }
 
-    let mut clconfig = ConfigData { ..Default::default() };
+    let mut clconfig = Config { ..Default::default() };
 
-    if config_exists() {
-        clconfig = get_config(".clconfig");
+    if Config::exists() {
+        clconfig = Config::load();
     }
 
     for argument in env::args().skip(1) {
