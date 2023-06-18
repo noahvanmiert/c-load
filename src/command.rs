@@ -8,8 +8,8 @@
 
 use std::{fs, vec};
 use std::fs::File;
-use std::io::Write;
-use std::process::{Command, Stdio};
+use std::io::{Write, ErrorKind};
+use std::process::{exit, Command, Stdio};
 use walkdir::WalkDir;
 
 use crate::config::Config;
@@ -22,9 +22,8 @@ impl ClCommand {
     /// This function initializes the C project.
     pub fn init(clconfig: &Config) {
 
-        fs::create_dir("src").expect("Failed to create `src/`");
-        fs::create_dir("bin").expect("Failed to create `bin/`");
-
+        Self::create_project_dirs();
+        
         Self::create_entry_point(&clconfig);
 
         Self::create_gitignore();
@@ -46,11 +45,12 @@ impl ClCommand {
         */
         for entry in WalkDir::new("src/") {
             let entry = entry.unwrap();
+            let entry_str = entry.path().to_str().unwrap().to_string();
             
-            if entry.path().to_str().unwrap().to_string().ends_with(".c") 
+            if entry_str.ends_with(".c") 
                 && !clconfig.ignore.contains(&entry.path().to_str().unwrap().to_string()) 
             {
-                sources.push(entry.path().to_str().unwrap().to_string());
+                sources.push(entry_str);
             }
         }
 
@@ -159,6 +159,46 @@ impl ClCommand {
         /* Write the main function to src/main.c */
         entry.write_all(main_function_template.as_bytes())
              .expect(format!("Faild to write to src/{}", clconfig.entry).as_str());
+
+    }
+
+
+    fn create_project_dirs() {
+
+        match fs::create_dir("src") {
+            Ok(_) => (),
+            Err(e) => {
+                match e.kind() {
+                    ErrorKind::AlreadyExists => {
+                        println!("Error: c-load already initialized in this project");
+                        exit(1);
+                    }
+
+                    other_e => {
+                        println!("Failed to create `src` folder: {}", other_e);
+                        exit(1);
+                    }
+                }
+            }
+        }
+
+        match fs::create_dir("bin") {
+            Ok(_) => (),
+            Err(e) => {
+                match e.kind() {
+                    ErrorKind::AlreadyExists => {
+                        println!("Error: c-load already initialized in this project");
+                        exit(1);
+                    }
+
+                    other_e => {
+                        println!("Failed to create `bin` folder: {}", other_e);
+                        exit(1);
+                    }
+                }
+            }
+        }
+        
 
     }
         

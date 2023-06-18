@@ -82,12 +82,12 @@ impl Default for Config {
 
         Config {
             compiler: "clang".to_string(),
-            output: "main.out".to_string(),
-            c_flags: vec![],
-            verbose: true,
-            ignore: vec![],
-            entry: "main.c".to_string(),
-            git: true,
+            output:   "main.out".to_string(),
+            c_flags:  vec![],
+            verbose:  true,
+            ignore:   vec![],
+            entry:    "main.c".to_string(),
+            git:      true,
         }
 
     }
