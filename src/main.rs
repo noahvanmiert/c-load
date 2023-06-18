@@ -12,6 +12,7 @@ use parser::Parser;
 mod command;
 mod config;
 mod parser;
+mod output;
 
 
 fn main() {

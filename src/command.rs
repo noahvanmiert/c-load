@@ -11,8 +11,10 @@ use std::fs::File;
 use std::io::{Write, ErrorKind};
 use std::process::{exit, Command, Stdio};
 use walkdir::WalkDir;
+use crossterm::style::Color;
 
 use crate::config::Config;
+use crate::output::Output;
 
 
 pub struct ClCommand;
@@ -31,7 +33,8 @@ impl ClCommand {
         // Checks if `git` is enabled, if so then initialize the git repo
         Self::init_git(&clconfig);
         
-        println!("Succesfully initialized c-load project!");
+        Output::print("Succesfully initialized c-load project!\n", Color::Green)
+               .unwrap();
     }
 
 
@@ -64,7 +67,7 @@ impl ClCommand {
         let output = format!("bin/{}", clconfig.output).to_string();
 
         if clconfig.verbose {
-            println!("Compiling");
+            Output::print("Compiling\n", Color::Green).unwrap();
             println!("->  {} {:?} -o {} {:?}", clconfig.compiler, sources, &output, clconfig.c_flags);
         }
 
@@ -79,7 +82,8 @@ impl ClCommand {
         child.wait().expect("Compilation failed");
 
         if clconfig.verbose {
-            println!("Compiliation finished succesfully!");
+            Output::print("Compiliation finished succesfully!\n", Color::Green)
+                   .unwrap();
         }
     }
 
@@ -90,7 +94,7 @@ impl ClCommand {
         let output = format!("bin/{}", clconfig.output).to_string();
 
         if clconfig.verbose {
-            println!("Running");
+            Output::print("Running", Color::Green).unwrap();
             println!("->  ./bin/{}\n", clconfig.output);
         }
 
@@ -170,12 +174,14 @@ impl ClCommand {
             Err(e) => {
                 match e.kind() {
                     ErrorKind::AlreadyExists => {
-                        println!("Error: c-load already initialized in this project");
+                        Output::print("Error: c-load already initialized in this project", Color::Red)
+                               .unwrap();
                         exit(1);
                     }
 
                     other_e => {
-                        println!("Failed to create `src` folder: {}", other_e);
+                        Output::print(format!("Failed to create `src` folder: {}", other_e).as_str(), Color::Red)
+                               .unwrap();
                         exit(1);
                     }
                 }
@@ -187,12 +193,14 @@ impl ClCommand {
             Err(e) => {
                 match e.kind() {
                     ErrorKind::AlreadyExists => {
-                        println!("Error: c-load already initialized in this project");
+                        Output::print("Error: c-load already initialized in this project", Color::Red)
+                               .unwrap();
                         exit(1);
                     }
 
                     other_e => {
-                        println!("Failed to create `bin` folder: {}", other_e);
+                        Output::print(format!("Failed to create `bin` folder: {}", other_e).as_str(), Color::Red)
+                               .unwrap();
                         exit(1);
                     }
                 }
