@@ -9,7 +9,6 @@ use serde::Deserialize;
 use std::fs::File;
 use std::io::Read;
 use std::path::Path;
-use std::process::exit;
 
 
 /// Contains de data defined in the configuration file
@@ -107,20 +106,17 @@ impl Config {
 
     /// Returns a Config struct instance with the data loaded from `.clconfig`
     pub fn load() -> Config {
-
         let mut file = File::open(".clconfig")
-                                  .expect("Failed to open config file");
+            .unwrap_or_else(|_| panic!("Failed to open config file"));
 
         let mut file_contents = String::new(); 
-
         file.read_to_string(&mut file_contents)
-            .expect("Failed to read config file");
+            .unwrap_or_else(|_| panic!("Failed to read config file"));
 
         let data: Config = serde_json::from_str(&file_contents)
-                                      .expect("Failed to deserialize JSON");
+            .unwrap_or_else(|_| panic!("Failed to deserialize JSON"));
 
-        return data;
-        
+        data
     }
 
 
@@ -130,13 +126,13 @@ impl Config {
         // For now we only support `gcc` and `clang`
         if self.compiler != "gcc" && self.compiler != "clang" {
             println!("Error: unkown compiler set in `.clconfig`: {}", self.compiler);
-            exit(1);
+            std::process::exit(1);
         }
 
         // The entry point should always be a C file because the `main` function is defined here
         if !self.entry.ends_with(".c") {
             println!("Error: entry point option in `.clconfig` should always be a `.c` file");
-            exit(1);
+            std::process::exit(1);
         }
 
     }

@@ -5,11 +5,11 @@
     This file is part of the C-load project.
 */
 
-
-use std::process::exit;
+use crossterm::style::Color;
 
 use crate::Config;
 use crate::command::ClCommand;
+use crate::output::Output;
 
 
 pub struct Parser;
@@ -20,54 +20,54 @@ impl Parser {
 
         for arg in std::env::args().skip(1) {
             if arg.starts_with('-') {
-                Self::parse_option(arg, &clconfig);
-                continue;
-            } 
-    
-            Self::parse_command(arg, &clconfig);
+                Self::parse_option(&arg, clconfig);
+            } else {
+                Self::parse_command(&arg, clconfig);
+            }
         }
 
     }
 
 
     /// This function parses the given options (flags)
-    fn parse_option(arg: String, _clconfig: &Config) {
+    fn parse_option(option: &str, _clconfig: &Config) {
 
-        if arg == "-h" || arg == "--help" {
-            ClCommand::help();
-            exit(0);
+        match option {
+            "-h" | "--help" => {
+                ClCommand::help();
+                std::process::exit(0);
+            }
+
+            _ => {
+                Output::print(&format!("Unkown option: {}", option), Color::Red).unwrap();
+                std::process::exit(1);
+            }
         }
-    
-        println!("Unkown option: {}", arg);
-        exit(1);
 
     }
 
 
     /// This function parses the given command
-    pub fn parse_command(command: String, clconfig: &Config) {
+    pub fn parse_command(command: &str, clconfig: &Config) {
 
-        match command.as_str() {
+        match command {
 
             "init" => {
                 ClCommand::init(&clconfig);
-                return;
             }
 
             "build" => {
                 ClCommand::build(&clconfig);
-                return;
             }
 
             "run" => {
                 ClCommand::build(&clconfig);
                 ClCommand::run(&clconfig);
-                return;
             }
 
             _ => {
-                println!("Unkown command: {}", command);
-                exit(1);
+                Output::print(&format!("Unkown command: {}", command), Color::Red).unwrap();
+                std::process::exit(1);
             }
 
         }
