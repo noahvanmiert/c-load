@@ -35,6 +35,9 @@ pub struct Config {
 
     #[serde(default = "default_git")]
     pub git: bool,
+
+    #[serde(default)]
+    pub packages: Vec<String>
 }
 
 
@@ -87,6 +90,7 @@ impl Default for Config {
             ignore:   vec![],
             entry:    "main.c".to_string(),
             git:      true,
+            packages: vec![]
         }
 
     }

@@ -60,9 +60,27 @@ impl ClCommand {
     }
 
 
+    fn get_package_sources() -> Vec<String> {
+        let mut sources: Vec<String> = Vec::new();
+
+        for entry in std::fs::read_dir("packages/objs").unwrap() {
+            if let Ok(entry) = entry {
+                let entry_str = entry.path().to_str().unwrap().to_string();
+
+                if entry_str.ends_with(".package.obj") {
+                    sources.push(entry_str);
+                }
+            }
+        }
+
+        sources
+    }
+
+
     /// This function builds the C project
     pub fn build(clconfig: &Config) {
         let sources = Self::get_src_files(clconfig);
+        let package_sources = Self::get_package_sources();
         let output = format!("bin/{}", clconfig.output);
 
         if clconfig.verbose {
@@ -72,6 +90,7 @@ impl ClCommand {
 
         let mut child = Command::new(&clconfig.compiler)
                 .args(sources)
+                .args(package_sources)
                 .arg("-o")
                 .arg(&output)
                 .args(&clconfig.c_flags)

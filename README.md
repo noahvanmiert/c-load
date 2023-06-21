@@ -4,6 +4,8 @@ C-load is a very simple build system and package manager for C, like `cargo` for
 
 !!! Still in development !!!
 
+Sorry I'm not so good at writing documentation 😅
+
 ## Installation
 You will have to compile C-load yourself, this is not that hard. 
 
@@ -112,3 +114,57 @@ Change entry point, if you don't want `main.c` to be your entry point you can us
 ```
 
 Now the main function will be in `entry.c` instead of `main.c`.
+
+
+## Package System
+
+### Create a package
+
+To create a package you first need to make a `.clpackage` file in the your project directory, this file is in a JSON format.
+
+The file should look something like the example shown below.
+
+```json
+{
+    "name": "mypackage",
+    "version": "0.1.0",
+    "author": "your name",
+    "license": "MIT",
+
+    "headers": [
+        "src/vector.h",
+        "src/math.h",
+    ],
+
+    "sources": [
+        "src/vector.c",
+        "src/math.c"
+    ]
+}
+```
+
+It's important that you give the full path from the project directory. The header files will be copied over to the project where this package is included and the sources will be compiled to object files and stored in the project using this package.
+
+Name, version, author and license aren't used yet, but will be in the future.
+
+### Use a package
+
+To use a package you just need to add it to your `.clconfig` file, like shown in the example below.
+
+```json
+{
+    "packages": [
+        "/Users/your-name/dev/my-package-project"
+    ]
+}
+```
+
+Here it's important to write the absolute path (this will change in the future so it's easier), and don't write a '/' at the end.
+
+Now the object files will automaticaly be compiled into your executable, to use the header files you need to include them with the correct path, this is shown down below.
+
+```c
+#include "../packages/the-package-name/the-file.h"
+```
+
+There will be a lot of bugs in the code for sure so please report them.
